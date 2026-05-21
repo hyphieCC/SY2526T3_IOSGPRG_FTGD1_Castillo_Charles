@@ -581,7 +581,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1263980555
+--- !u!1001 &1066033629
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -589,13 +589,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1920805276073405689, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
+      propertyPath: _arrowType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1920805276073405689, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
+      propertyPath: _swipeDirection
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4570200686682067516, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.1828483
+      value: -0.21408832
       objectReference: {fileID: 0}
     - target: {fileID: 4570200686682067516, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.89
+      value: 2.1079676
       objectReference: {fileID: 0}
     - target: {fileID: 4570200686682067516, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_LocalPosition.z
@@ -631,7 +639,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8563723077466754682, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_Name
-      value: Enemy (Green Left)
+      value: Enemy (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -720,7 +728,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1764136531
+--- !u!1001 &2020354873
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -728,21 +736,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1920805276073405689, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
-      propertyPath: _arrowType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1920805276073405689, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
-      propertyPath: _swipeDirection
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 4570200686682067516, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.01
+      value: -1.33
       objectReference: {fileID: 0}
     - target: {fileID: 4570200686682067516, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.4
+      value: 0.52
       objectReference: {fileID: 0}
     - target: {fileID: 4570200686682067516, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_LocalPosition.z
@@ -778,7 +778,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8563723077466754682, guid: f8343f75e3468a744a1fa91bf6219056, type: 3}
       propertyPath: m_Name
-      value: Enemy (Red Down)
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -997,5 +997,5 @@ SceneRoots:
   - {fileID: 1716041260}
   - {fileID: 173556611}
   - {fileID: 2072665153}
-  - {fileID: 1263980555}
-  - {fileID: 1764136531}
+  - {fileID: 2020354873}
+  - {fileID: 1066033629}

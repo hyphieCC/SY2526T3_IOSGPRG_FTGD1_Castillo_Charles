@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    /*
-    [SerializeField] private int _health;
-    [SerializeField] private int _speed;
-
-    public void Initialize()
-    {
-        _health = Random.Range(1, 100);
-        _speed = Random.Range(1, 10);
-    }
-    */
-
+    //Enums in separate .cs files
     [SerializeField] private SwipeDirection _swipeDirection;
     [SerializeField] private ArrowType _arrowType;
+
+    [Header("Visuals")]
+    [SerializeField] private SpriteRenderer _arrowRenderer;
+    [SerializeField] private List<Sprite> _arrowSprites;
+
+    private void Start()
+    {
+        RandomizeArrow(); //For Testing
+        SetupArrow();
+    }
 
     public bool CheckPlayerSwipe(SwipeDirection direction)
     {
@@ -26,6 +26,21 @@ public class Enemy : MonoBehaviour
         }
 
         return direction == _swipeDirection;
+    }
+
+    private void SetupArrow()
+    {
+        int directionIndex = (int)_swipeDirection; //Check SwipeDirection.cs for order
+        _arrowRenderer.sprite = _arrowSprites[directionIndex];
+
+        if (_arrowType == ArrowType.Green)
+        {
+            _arrowRenderer.color = Color.green;
+        }
+        else
+        {
+            _arrowRenderer.color = Color.red;
+        }
     }
 
     private SwipeDirection GetOppositeDirection(SwipeDirection direction)
@@ -53,5 +68,12 @@ public class Enemy : MonoBehaviour
                 return direction; //Should not reach here
             }
         }
+    }
+
+    //Testing Area
+    private void RandomizeArrow()
+    {
+        _swipeDirection = (SwipeDirection)Random.Range(0, 4);
+        _arrowType = (ArrowType)Random.Range(0, 2);
     }
 }
