@@ -1,9 +1,32 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private int _startHealth;
+    [SerializeField] private GameStateUI _gameStateUI;
+
+    [Header("Dash Gauge")]
+    [SerializeField] private float _maxDashGauge;
+    [SerializeField] private float _dashGaugeGain;
+
+    [Header("Dash")]
+    [SerializeField] private float _dashDuration; //Would be (n/3) seconds in reality because of Time.timeScale = 3f during dash
+    [SerializeField] private float _dashDrainSpeed;
+
+    private int _currentHealth;
+    private float _currentDashGauge;
+    private bool _isDashing;
+
     List<Enemy> _enemies = new List<Enemy>();
+
+    private void Start()
+    {
+        _currentHealth = _startHealth;
+        _gameStateUI.UpdateLivesText(_currentHealth);
+        _gameStateUI.UpdateDashGauge(_currentDashGauge, _maxDashGauge);
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -12,6 +35,7 @@ public class Player : MonoBehaviour
         if (enemy != null)
         {
             _enemies.Add(enemy);
+            enemy.SetPlayerInRange(true);
         }
     }
 
@@ -22,11 +46,18 @@ public class Player : MonoBehaviour
         if (enemy != null)
         {
             _enemies.Remove(enemy);
+            enemy.SetPlayerInRange(false);
+            DamageFromEnemy(enemy);
         }
     }
 
     public void CheckSwipe(SwipeDirection direction)
     {
+        if (_isDashing)
+        {
+            return;
+        }
+
         if (_enemies.Count <= 0)
         {
             return;
@@ -36,8 +67,128 @@ public class Player : MonoBehaviour
 
         if (enemy.CheckPlayerSwipe(direction))
         {
-            _enemies.Remove(enemy);
-            Destroy(enemy.gameObject);
+            KillEnemy(enemy);
         }
+        else
+        {
+            DamageFromEnemy(enemy);
+        }
+    }
+
+    public void KillEnemy(Enemy enemy)
+    {
+        enemy.MarkAsInteractedWithPlayer();
+        _enemies.Remove(enemy);
+
+        PowerupChance();
+
+        if (!_isDashing)
+        {
+            AddDashGauge();
+        }
+
+        Destroy(enemy.gameObject);
+    }
+
+    public void BTN_Dash()
+    {
+        if (_isDashing)
+        {
+            return;
+        }
+
+        if (_currentDashGauge < _maxDashGauge)
+        {
+            return;
+        }
+
+        StartCoroutine(CO_Dash());
+    }
+
+    public bool IsDashing
+    {
+        get => _isDashing;
+    }
+
+    private void PowerupChance()
+    {
+        int randomChance = Random.Range(1, 101);
+
+        if (randomChance <= 3)
+        {
+            _currentHealth++;
+            _gameStateUI.UpdateLivesText(_currentHealth);
+        }
+    }
+
+    private void TakeDamage(int damage)
+    {
+        _currentHealth -= damage;
+        _gameStateUI.UpdateLivesText(_currentHealth);
+
+        if (_currentHealth <= 0)
+        {
+            GameOver();
+        }
+    }
+
+    private void DamageFromEnemy(Enemy enemy)
+    {
+        if (enemy.HasInteractedWithPlayer)
+        {
+            return;
+        }
+
+        enemy.MarkAsInteractedWithPlayer();
+        TakeDamage(1);
+    }
+
+    private void GameOver()
+    {
+        _gameStateUI.ShowGameOver();
+    }
+
+    private void AddDashGauge()
+    {
+        if (_isDashing)
+        {
+            return;
+        }
+
+        _currentDashGauge += _dashGaugeGain;
+
+        if (_currentDashGauge > _maxDashGauge)
+        {
+            _currentDashGauge = _maxDashGauge;
+        }
+
+        _gameStateUI.UpdateDashGauge(_currentDashGauge, _maxDashGauge);
+    }
+
+    private IEnumerator CO_Dash()
+    {
+        _isDashing = true;
+        Time.timeScale = 3f;
+        float currentDashTime = 0f;
+
+        while (currentDashTime < _dashDuration)
+        {
+            currentDashTime += Time.deltaTime;
+            _currentDashGauge -= _dashDrainSpeed * Time.deltaTime;
+
+            if (_currentDashGauge < 0f)
+            {
+                _currentDashGauge = 0f;
+            }
+
+            _gameStateUI.UpdateDashGauge(_currentDashGauge, _maxDashGauge);
+
+            yield return null;
+        }
+
+        _currentDashGauge = 0f;
+        _gameStateUI.UpdateDashGauge(_currentDashGauge, _maxDashGauge);
+        _isDashing = false;
+        Time.timeScale = 1f;
     }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9160410626973382892}
   - component: {fileID: 3411088484379007943}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -186,6 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _swipeDirection: 1
   _arrowType: 0
+  _moveSpeed: 4
   _arrowRenderer: {fileID: 3411088484379007943}
   _arrowSprites:
   - {fileID: 21300000, guid: 9353cb8106baa934aadc29775f1baed9, type: 3}
