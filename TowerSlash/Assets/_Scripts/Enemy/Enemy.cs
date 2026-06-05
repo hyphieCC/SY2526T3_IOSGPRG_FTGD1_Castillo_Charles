@@ -13,12 +13,14 @@ public class Enemy : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private SpriteRenderer _arrowRenderer;
     [SerializeField] private List<Sprite> _arrowSprites;
+    [SerializeField] private GameObject _arrowBox;
 
     private bool _isPlayerInRange = false;
     private bool _hasInteractedWithPlayer = false;
 
     private void Start()
     {
+        _arrowBox.SetActive(false);
         RandomizeArrowType();
         RandomizeArrowDirection();
         SetupArrow();
@@ -65,6 +67,7 @@ public class Enemy : MonoBehaviour
     public void SetPlayerInRange(bool value) //Helper for player collision detection
     {
         _isPlayerInRange = value;
+        _arrowBox.SetActive(value);
 
         if (_isPlayerInRange && _arrowType == ArrowType.Yellow)
         {

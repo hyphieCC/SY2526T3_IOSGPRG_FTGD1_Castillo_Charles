@@ -6,6 +6,12 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private int _startHealth;
     [SerializeField] private GameStateUI _gameStateUI;
+    [SerializeField] private int _killScoreGain;
+
+    [Header("Visuals")]
+    [SerializeField] private GameObject _defaultVisual;
+    [SerializeField] private GameObject _tankVisual;
+    [SerializeField] private GameObject _speedVisual;
 
     [Header("Dash Gauge")]
     [SerializeField] private float _maxDashGauge;
@@ -15,16 +21,31 @@ public class Player : MonoBehaviour
     [SerializeField] private float _dashDuration; //Would be (n/3) seconds in reality because of Time.timeScale = 3f during dash
     [SerializeField] private float _dashDrainSpeed;
 
+    [Header("Tap Leap")]
+    [SerializeField] private float _leapHeight;
+    [SerializeField] private float _leapSpeed;
+    [SerializeField] private int _tapLeapScoreGain;
+    [SerializeField] private float _tapLeapDashGaugeGain;
+
+    private bool _hasSelectedCharacter;
     private int _currentHealth;
+
     private float _currentDashGauge;
     private bool _isDashing;
+
+    private Vector3 _startPosition;
+    private bool _isTapLeaping;
 
     List<Enemy> _enemies = new List<Enemy>();
 
     private void Start()
     {
+        _defaultVisual.SetActive(false);
+        _tankVisual.SetActive(false);
+        _speedVisual.SetActive(false);
+
+        _startPosition = transform.position;
         _currentHealth = _startHealth;
-        _gameStateUI.UpdateLivesText(_currentHealth);
         _gameStateUI.UpdateDashGauge(_currentDashGauge, _maxDashGauge);
     }
 
@@ -47,12 +68,54 @@ public class Player : MonoBehaviour
         {
             _enemies.Remove(enemy);
             enemy.SetPlayerInRange(false);
-            DamageFromEnemy(enemy);
         }
+    }
+
+    public void SelectCharacter(CharacterType characterType)
+    {
+        _defaultVisual.SetActive(false);
+        _tankVisual.SetActive(false);
+        _speedVisual.SetActive(false);
+
+        switch (characterType)
+        {
+            case CharacterType.Default:
+                {
+                    _defaultVisual.SetActive(true);
+                    _startHealth = 3;
+                    _dashGaugeGain = 5f;
+                    break;
+                }
+
+            case CharacterType.Tank:
+                {
+                    _tankVisual.SetActive(true);
+                    _startHealth = 5;
+                    _dashGaugeGain = 5f;
+                    break;
+                }
+
+            case CharacterType.Speed:
+                {
+                    _speedVisual.SetActive(true);
+                    _startHealth = 3;
+                    _dashGaugeGain = 10f;
+                    break;
+                }
+        }
+
+        _currentHealth = _startHealth;
+        _gameStateUI.UpdateLivesText(_currentHealth);
+        _hasSelectedCharacter = true;
     }
 
     public void CheckSwipe(SwipeDirection direction)
     {
+        if (!_hasSelectedCharacter)
+        {
+            return;
+        }
+
         if (_isDashing)
         {
             return;
@@ -80,18 +143,35 @@ public class Player : MonoBehaviour
         enemy.MarkAsInteractedWithPlayer();
         _enemies.Remove(enemy);
 
+        _gameStateUI.AddScore(_killScoreGain);
         PowerupChance();
 
         if (!_isDashing)
         {
-            AddDashGauge();
+            AddDashGauge(_dashGaugeGain);
         }
 
         Destroy(enemy.gameObject);
     }
 
+    public void DamageFromEnemy(Enemy enemy)
+    {
+        if (enemy.HasInteractedWithPlayer)
+        {
+            return;
+        }
+
+        enemy.MarkAsInteractedWithPlayer();
+        TakeDamage(1);
+    }
+
     public void BTN_Dash()
     {
+        if (!_hasSelectedCharacter)
+        {
+            return;
+        }
+
         if (_isDashing)
         {
             return;
@@ -108,6 +188,29 @@ public class Player : MonoBehaviour
     public bool IsDashing
     {
         get => _isDashing;
+    }
+
+    public void TapLeap()
+    {
+        if (!_hasSelectedCharacter)
+        {
+            return;
+        }
+
+        if (_isDashing)
+        {
+            return;
+        }
+
+        if (_isTapLeaping)
+        {
+            return;
+        }
+
+        _gameStateUI.AddScore(_tapLeapScoreGain);
+        AddDashGauge(_tapLeapDashGaugeGain);
+
+        StartCoroutine(CO_TapLeap());
     }
 
     private void PowerupChance()
@@ -132,30 +235,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void DamageFromEnemy(Enemy enemy)
-    {
-        if (enemy.HasInteractedWithPlayer)
-        {
-            return;
-        }
-
-        enemy.MarkAsInteractedWithPlayer();
-        TakeDamage(1);
-    }
-
     private void GameOver()
     {
         _gameStateUI.ShowGameOver();
     }
 
-    private void AddDashGauge()
+    private void AddDashGauge(float amount)
     {
         if (_isDashing)
         {
             return;
         }
 
-        _currentDashGauge += _dashGaugeGain;
+        _currentDashGauge += amount;
 
         if (_currentDashGauge > _maxDashGauge)
         {
@@ -190,5 +282,36 @@ public class Player : MonoBehaviour
         _gameStateUI.UpdateDashGauge(_currentDashGauge, _maxDashGauge);
         _isDashing = false;
         Time.timeScale = 1f;
+    }
+
+    private IEnumerator CO_TapLeap()
+    {
+        Debug.Log("TapLeap was called");
+        _isTapLeaping = true;
+
+        Vector3 topPosition = _startPosition + Vector3.up * _leapHeight;
+
+        while (Vector3.Distance(transform.position, topPosition) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                topPosition,
+                _leapSpeed * Time.deltaTime);
+
+            yield return null;
+        }
+
+        while (Vector3.Distance(transform.position, _startPosition) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                _startPosition,
+                _leapSpeed * Time.deltaTime);
+
+            yield return null;
+        }
+
+        transform.position = _startPosition;
+        _isTapLeaping = false;
     }
 }

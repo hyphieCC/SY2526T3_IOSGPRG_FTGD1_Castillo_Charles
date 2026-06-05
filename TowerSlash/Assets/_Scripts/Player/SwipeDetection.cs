@@ -44,7 +44,8 @@ public class SwipeDetection : MonoBehaviour
 
         if (swipe.magnitude < _minSwipeDistance)
         {
-            Debug.Log("Swipe too short");
+            Debug.Log("Swipe too short, is registered as Tap");
+            _player.TapLeap();
             return;
         }
 
