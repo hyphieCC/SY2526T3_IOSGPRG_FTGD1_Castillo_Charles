@@ -140,6 +140,11 @@ public class Player : MonoBehaviour
 
     public void KillEnemy(Enemy enemy)
     {
+        if (enemy == null || enemy.HasInteractedWithPlayer)
+        {
+            return;
+        }
+
         enemy.MarkAsInteractedWithPlayer();
         _enemies.Remove(enemy);
 
@@ -156,8 +161,14 @@ public class Player : MonoBehaviour
 
     public void DamageFromEnemy(Enemy enemy)
     {
-        if (enemy.HasInteractedWithPlayer)
+        if (enemy == null || enemy.HasInteractedWithPlayer)
         {
+            return;
+        }
+
+        if (_isDashing)
+        {
+            KillEnemy(enemy);
             return;
         }
 
@@ -203,6 +214,11 @@ public class Player : MonoBehaviour
         }
 
         if (_isTapLeaping)
+        {
+            return;
+        }
+
+        if (_enemies.Count > 0)
         {
             return;
         }
