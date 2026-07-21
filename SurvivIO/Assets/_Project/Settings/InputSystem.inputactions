@@ -213,7 +213,7 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KBM",
                     "action": "Fire",
                     "isComposite": false,
                     "isPartOfComposite": false

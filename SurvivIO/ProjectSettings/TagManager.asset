@@ -15,8 +15,8 @@ TagManager:
   - WorldBoundary
   - Obstacle
   - Loot
-  - 
-  - 
+  - Projectile
+  - Enemy
   - 
   - 
   - 

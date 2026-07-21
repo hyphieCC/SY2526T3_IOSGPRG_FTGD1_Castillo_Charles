@@ -134,6 +134,49 @@ namespace Castillo.Loot
             }
         }
 
+        public int RemoveAmmo(AmmoType ammoType, int requestedAmount)
+        {
+            if (requestedAmount <= 0)
+            {
+                return 0;
+            }
+
+            int amountRemoved = 0;
+
+            switch (ammoType)
+            {
+                case AmmoType.NineMillimeter:
+                    {
+                        amountRemoved = RemoveNineMillimeter(requestedAmount);
+                        break;
+                    }
+
+                case AmmoType.TwelveGauge:
+                    {
+                        amountRemoved = RemoveTwelveGauge(requestedAmount);
+                        break;
+                    }
+
+                case AmmoType.FiveFiveSixMillimeter:
+                    {
+                        amountRemoved = RemoveFiveFiveSixMillimeter(requestedAmount);
+                        break;
+                    }
+
+                default:
+                    {
+                        return 0;
+                    }
+            }
+
+            if (amountRemoved > 0)
+            {
+                AmmoChanged?.Invoke(ammoType, GetAmmoAmount(ammoType));
+            }
+
+            return amountRemoved;
+        }
+
         private int AddNineMillimeter(int amount)
         {
             int previousAmount = NineMillimeter;
@@ -159,6 +202,39 @@ namespace Castillo.Loot
             FiveFiveSixMillimeter = Mathf.Min(FiveFiveSixMillimeter + amount, _maximumFiveFiveSixMillimeter);
 
             return FiveFiveSixMillimeter - previousAmount;
+        }
+
+        private int RemoveNineMillimeter(int requestedAmount)
+        {
+            int amountRemoved = Mathf.Min(
+                requestedAmount,
+                NineMillimeter
+            );
+
+            NineMillimeter -= amountRemoved;
+            return amountRemoved;
+        }
+
+        private int RemoveTwelveGauge(int requestedAmount)
+        {
+            int amountRemoved = Mathf.Min(
+                requestedAmount,
+                TwelveGauge
+            );
+
+            TwelveGauge -= amountRemoved;
+            return amountRemoved;
+        }
+
+        private int RemoveFiveFiveSixMillimeter(int requestedAmount)
+        {
+            int amountRemoved = Mathf.Min(
+                requestedAmount,
+                FiveFiveSixMillimeter
+            );
+
+            FiveFiveSixMillimeter -= amountRemoved;
+            return amountRemoved;
         }
     }
 }

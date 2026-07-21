@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Castillo.Combat
 {
-    public class Health : MonoBehaviour
+    public class Health : MonoBehaviour, IDamageable
     {
         [SerializeField] private float _maximumHealth = 100f;
 

@@ -145,4 +145,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ammoType: 1
   _minimumAmount: 1
-  _maximumAmount: 1
+  _maximumAmount: 2
