@@ -3,6 +3,7 @@ namespace Castillo.Enemies
     public enum EnemyState
     {
         Patrol,
-        Seek
+        Seek,
+        Attack
     }
 }

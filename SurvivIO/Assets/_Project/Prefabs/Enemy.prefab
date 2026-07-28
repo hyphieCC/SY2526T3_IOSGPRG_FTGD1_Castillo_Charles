@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2794099632565391794}
   - component: {fileID: 6947335904552361839}
   - component: {fileID: 5001845244702562081}
+  - component: {fileID: 8780270618740001681}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Untagged
@@ -133,6 +134,8 @@ MonoBehaviour:
   _weaponController: {fileID: 5001845244702562081}
   _patrolRadius: 5
   _maximumPatrolDuration: 4
+  _attackDistance: 10
+  _semiAutomaticInputInterval: 0.1
 --- !u!114 &2794099632565391794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,6 +188,19 @@ MonoBehaviour:
   - {fileID: 8726943623106434521, guid: 4de0ead098449ad44a686d5ccbf63ce8, type: 3}
   - {fileID: -7631643060654702632, guid: 8f42169d23163d0458eb9f7184572834, type: 3}
   - {fileID: 5674313796295810651, guid: 7bf4c9d6d7e9d544b91f37d0d883daf1, type: 3}
+--- !u!114 &8780270618740001681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398320593913919615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57c357d43b6e14d46a5b649a76ea62fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _health: {fileID: 8103966018325367998}
 --- !u!1 &2277492577738650762
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +299,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 4
+  m_Radius: 8
 --- !u!114 &7133924085216217405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,6 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3039b491cb4e604cab981aa1b0644b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _detectionCollider: {fileID: 8495726063099727072}
 --- !u!1 &5422379645193882954
 GameObject:
   m_ObjectHideFlags: 0

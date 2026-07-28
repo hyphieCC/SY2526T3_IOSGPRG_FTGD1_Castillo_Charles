@@ -15,19 +15,33 @@ namespace Castillo.Weapons
         [Header("Lifetime")]
         [SerializeField] private float _maximumLifetime = 5f;
 
+        private Health _ownerHealth;
+
         private void Start()
         {
             Destroy(gameObject, _maximumLifetime);
         }
 
-        public void Launch(Vector2 direction)
+        public void Launch(Vector2 direction, GameObject owner)
         {
+            _ownerHealth = owner.GetComponent<Health>();
+
             _rigidbody.velocity = direction.normalized * _moveSpeed;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.TryGetComponent(out IDamageable damageable))
+            Health hitHealth = other.GetComponentInParent<Health>();
+
+            if (hitHealth != null && hitHealth == _ownerHealth)
+            {
+                return;
+            }
+
+            IDamageable damageable =
+                other.GetComponentInParent<IDamageable>();
+
+            if (damageable != null)
             {
                 damageable.TakeDamage(_damage);
             }

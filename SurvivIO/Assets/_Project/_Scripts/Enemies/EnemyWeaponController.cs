@@ -63,7 +63,12 @@ namespace Castillo.Enemies
             EquippedWeapon.transform.localPosition = Vector3.zero;
             EquippedWeapon.transform.localRotation = Quaternion.identity;
 
-            EquippedWeapon.Initialize(_ammoInventory);
+            EquippedWeapon.Initialize(
+                _ammoInventory,
+                gameObject,
+                true,
+                2f
+            );
             WeaponEquipped?.Invoke(EquippedWeapon);
         }
 
@@ -91,6 +96,26 @@ namespace Castillo.Enemies
                 0f,
                 angle - 90f
             );
+        }
+
+        public void BeginFiring()
+        {
+            if (EquippedWeapon == null)
+            {
+                return;
+            }
+
+            EquippedWeapon.BeginFire();
+        }
+
+        public void EndFiring()
+        {
+            if (EquippedWeapon == null)
+            {
+                return;
+            }
+
+            EquippedWeapon.EndFire();
         }
 
         private WeaponBase GetRandomWeaponPrefab()

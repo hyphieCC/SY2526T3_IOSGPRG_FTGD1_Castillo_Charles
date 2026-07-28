@@ -37,7 +37,12 @@ namespace Castillo.Weapons
         public event Action<WeaponBase> ReloadCompleted;
 
         private AmmoInventory _ammoInventory;
+        private bool _hasUnlimitedAmmo;
+        private float _reloadDurationMultiplier = 1f;
         private float _nextFireTime;
+        private GameObject _owner;
+
+        protected GameObject Owner => _owner;
 
         protected virtual void Awake()
         {
@@ -60,9 +65,22 @@ namespace Castillo.Weapons
             ReloadCompleted?.Invoke(this);
         }
 
-        public void Initialize(AmmoInventory ammoInventory)
+        public void Initialize(
+            AmmoInventory ammoInventory,
+            GameObject owner,
+            bool hasUnlimitedAmmo = false,
+            float reloadDurationMultiplier = 1f
+        )
         {
             _ammoInventory = ammoInventory;
+            _owner = owner;
+            _hasUnlimitedAmmo = hasUnlimitedAmmo;
+
+            _reloadDurationMultiplier = Mathf.Max(
+                reloadDurationMultiplier,
+                0f
+            );
+
             AmmoStateChanged?.Invoke(this);
         }
 
@@ -136,12 +154,17 @@ namespace Castillo.Weapons
                 return false;
             }
 
-            if (_ammoInventory == null)
+            if (CurrentClipAmmo >= _clipCapacity)
             {
                 return false;
             }
 
-            if (CurrentClipAmmo >= _clipCapacity)
+            if (_hasUnlimitedAmmo)
+            {
+                return true;
+            }
+
+            if (_ammoInventory == null)
             {
                 return false;
             }
@@ -159,14 +182,26 @@ namespace Castillo.Weapons
             IsReloading = true;
             ReloadStarted?.Invoke(this);
 
-            yield return new WaitForSeconds(_reloadDuration);
+            float adjustedReloadDuration = _reloadDuration * _reloadDurationMultiplier;
+
+            yield return new WaitForSeconds(adjustedReloadDuration);
 
             int missingAmmo = _clipCapacity - CurrentClipAmmo;
-            int ammoRemoved = _ammoInventory.RemoveAmmo(
-                _ammoType,
-                missingAmmo);
 
-            CurrentClipAmmo += ammoRemoved;
+            if (_hasUnlimitedAmmo)
+            {
+                CurrentClipAmmo += missingAmmo;
+            }
+            else
+            {
+                int ammoRemoved = _ammoInventory.RemoveAmmo(
+                    _ammoType,
+                    missingAmmo
+                );
+
+                CurrentClipAmmo += ammoRemoved;
+            }
+
             IsReloading = false;
 
             ReloadCompleted?.Invoke(this);

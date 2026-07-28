@@ -35,10 +35,20 @@ namespace Castillo.Weapons
 
         private void OnDisable()
         {
+            if (_inputReader == null)
+            {
+                return;
+            }
+
             _inputReader.FirePressed -= BeginFiringEquippedWeapon;
             _inputReader.FireReleased -= EndFiringEquippedWeapon;
             _inputReader.PrimaryWeaponSelected -= EquipPrimaryWeapon;
             _inputReader.SecondaryWeaponSelected -= EquipSecondaryWeapon;
+
+            if (EquippedWeapon != null)
+            {
+                EquippedWeapon.EndFire();
+            }
         }
 
         private void Awake()
@@ -150,7 +160,10 @@ namespace Castillo.Weapons
             currentWeapon.transform.localPosition = Vector3.zero;
             currentWeapon.transform.localRotation = Quaternion.identity;
 
-            currentWeapon.Initialize(_ammoInventory);
+            currentWeapon.Initialize(
+                _ammoInventory,
+                gameObject
+            );
         }
 
         private void EquipWeapon(WeaponBase weapon)

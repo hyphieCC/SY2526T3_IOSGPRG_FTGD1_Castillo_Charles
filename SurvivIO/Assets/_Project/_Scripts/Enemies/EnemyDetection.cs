@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Castillo.Combat;
 
+
 namespace Castillo.Enemies
 {
     public class EnemyDetection : MonoBehaviour
@@ -14,49 +15,65 @@ namespace Castillo.Enemies
         public event Action<Health> TargetDetected;
         public event Action TargetLost;
 
+        private Health _ownerHealth;
+
+        private void Awake()
+        {
+            _ownerHealth = GetComponentInParent<Health>();
+        }
+
         private void OnDisable()
         {
             UnsubscribeFromCurrentTarget();
+
+            CurrentTarget = null;
+            _detectedTargets.Clear();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!other.TryGetComponent(out Health health))
+            Health detectedHealth = other.GetComponentInParent<Health>();
+
+            if (detectedHealth == null)
             {
                 return;
             }
 
-            if (health.transform.root == transform.root)
+            if (detectedHealth == _ownerHealth)
             {
                 return;
             }
 
-            if (_detectedTargets.Contains(health))
+            if (detectedHealth.IsDead)
             {
                 return;
             }
 
-            _detectedTargets.Add(health);
-
-            if (CurrentTarget == null)
+            if (_detectedTargets.Contains(detectedHealth))
             {
-                SetTarget(health);
+                return;
             }
+
+            _detectedTargets.Add(detectedHealth);
+
+            SelectNearestTarget();
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!other.TryGetComponent(out Health health))
+            Health detectedHealth = other.GetComponentInParent<Health>();
+
+            if (detectedHealth == null)
             {
                 return;
             }
 
-            if (!_detectedTargets.Remove(health))
+            if (!_detectedTargets.Remove(detectedHealth))
             {
                 return;
             }
 
-            if (CurrentTarget != health)
+            if (CurrentTarget != detectedHealth)
             {
                 return;
             }
@@ -64,8 +81,55 @@ namespace Castillo.Enemies
             SelectNextTarget();
         }
 
+        private void SelectNearestTarget()
+        {
+            Health nearestTarget = GetNearestTarget();
+
+            if (nearestTarget == null || nearestTarget == CurrentTarget)
+            {
+                return;
+            }
+
+            SetTarget(nearestTarget);
+        }
+
+        private Health GetNearestTarget()
+        {
+            Health nearestTarget = null;
+            float nearestDistanceSquared = float.MaxValue;
+            Vector2 ownerPosition = _ownerHealth.transform.position;
+
+            foreach (Health detectedTarget in _detectedTargets)
+            {
+                if (detectedTarget == null ||
+                    detectedTarget.IsDead ||
+                    detectedTarget == _ownerHealth)
+                {
+                    continue;
+                }
+
+                Vector2 targetPosition = detectedTarget.transform.position;
+                float distanceSquared = (targetPosition - ownerPosition).sqrMagnitude;
+
+                if (distanceSquared >= nearestDistanceSquared)
+                {
+                    continue;
+                }
+
+                nearestDistanceSquared = distanceSquared;
+                nearestTarget = detectedTarget;
+            }
+
+            return nearestTarget;
+        }
+
         private void SetTarget(Health target)
         {
+            if (target == CurrentTarget)
+            {
+                return;
+            }
+
             UnsubscribeFromCurrentTarget();
 
             CurrentTarget = target;
@@ -85,9 +149,11 @@ namespace Castillo.Enemies
             UnsubscribeFromCurrentTarget();
             RemoveInvalidTargets();
 
-            if (_detectedTargets.Count > 0)
+            Health nearestTarget = GetNearestTarget();
+
+            if (nearestTarget != null)
             {
-                SetTarget(_detectedTargets[0]);
+                SetTarget(nearestTarget);
                 return;
             }
 
@@ -121,5 +187,6 @@ namespace Castillo.Enemies
 
             CurrentTarget.Died -= OnCurrentTargetDied;
         }
+
     }
 }

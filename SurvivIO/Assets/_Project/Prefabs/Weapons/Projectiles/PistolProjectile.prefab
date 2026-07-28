@@ -162,6 +162,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 4087064977392226697}
-  _moveSpeed: 30
+  _moveSpeed: 15
   _damage: 10
   _maximumLifetime: 3

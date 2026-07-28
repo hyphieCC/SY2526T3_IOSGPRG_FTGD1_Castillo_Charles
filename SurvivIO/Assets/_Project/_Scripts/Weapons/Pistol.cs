@@ -12,7 +12,10 @@ namespace Castillo.Weapons
                 _firePoint.rotation
             );
 
-            projectile.Launch(_firePoint.up);
+            projectile.Launch(
+                _firePoint.up,
+                Owner
+            );
         }
     }
 }

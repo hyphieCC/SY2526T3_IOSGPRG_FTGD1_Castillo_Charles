@@ -33,7 +33,10 @@ namespace Castillo.Weapons
                 pelletRotation
             );
 
-            projectile.Launch(pelletRotation * Vector2.up);
+            projectile.Launch(
+                pelletRotation * Vector2.up,
+                Owner
+            );
         }
     }
 }
