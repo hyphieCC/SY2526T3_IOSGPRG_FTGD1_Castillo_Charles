@@ -212,6 +212,7 @@ namespace Castillo.Loot
             );
 
             NineMillimeter -= amountRemoved;
+
             return amountRemoved;
         }
 
@@ -223,6 +224,7 @@ namespace Castillo.Loot
             );
 
             TwelveGauge -= amountRemoved;
+
             return amountRemoved;
         }
 
@@ -234,6 +236,7 @@ namespace Castillo.Loot
             );
 
             FiveFiveSixMillimeter -= amountRemoved;
+
             return amountRemoved;
         }
     }

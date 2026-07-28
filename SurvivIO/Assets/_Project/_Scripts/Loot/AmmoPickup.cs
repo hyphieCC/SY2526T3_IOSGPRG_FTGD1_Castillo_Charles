@@ -16,7 +16,6 @@ namespace Castillo.Loot
             }
 
             int ammoAmount = Random.Range(_minimumAmount, _maximumAmount + 1);
-
             int amountAdded = ammoInventory.AddAmmo(_ammoType, ammoAmount);
 
             if (amountAdded <= 0)

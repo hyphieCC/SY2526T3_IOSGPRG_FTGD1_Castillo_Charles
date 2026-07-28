@@ -44,7 +44,8 @@ namespace Castillo.Weapons
             CurrentClipAmmo = Mathf.Clamp(
                 _startingClipAmmo,
                 0,
-                _clipCapacity);
+                _clipCapacity
+            );
         }
 
         protected virtual void OnDisable()
@@ -94,6 +95,15 @@ namespace Castillo.Weapons
             }
 
             StartCoroutine(CO_Reload());
+        }
+
+        public virtual void BeginFire()
+        {
+            TryFire();
+        }
+
+        public virtual void EndFire()
+        {
         }
 
         protected abstract void FireProjectile();

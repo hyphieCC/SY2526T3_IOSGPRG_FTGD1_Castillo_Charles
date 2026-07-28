@@ -12,6 +12,7 @@ namespace Castillo.Player
         public Vector2 AimInput { get; private set; }
 
         public event Action FirePressed;
+        public event Action FireReleased;
         public event Action PrimaryWeaponSelected;
         public event Action SecondaryWeaponSelected;
 
@@ -39,6 +40,8 @@ namespace Castillo.Player
             _aimAction.canceled += OnAimChanged;
 
             _fireAction.started += OnFireStarted;
+            _fireAction.canceled += OnFireReleased;
+
             _switchPrimaryAction.started += OnSwitchPrimaryStarted;
             _switchSecondaryAction.started += OnSwitchSecondaryStarted;
         }
@@ -52,6 +55,8 @@ namespace Castillo.Player
             _aimAction.canceled -= OnAimChanged;
 
             _fireAction.started -= OnFireStarted;
+            _fireAction.canceled -= OnFireReleased;
+
             _switchPrimaryAction.started -= OnSwitchPrimaryStarted;
             _switchSecondaryAction.started -= OnSwitchSecondaryStarted;
         }
@@ -79,6 +84,11 @@ namespace Castillo.Player
         private void OnSwitchSecondaryStarted(InputAction.CallbackContext context)
         {
             SecondaryWeaponSelected?.Invoke();
+        }
+
+        private void OnFireReleased(InputAction.CallbackContext context)
+        {
+            FireReleased?.Invoke();
         }
     }
 }

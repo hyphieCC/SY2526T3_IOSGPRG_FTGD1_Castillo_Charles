@@ -169,4 +169,6 @@ MonoBehaviour:
   _fireDelay: 0.6
   _reloadDuration: 2.7
   _firePoint: {fileID: 4049605596330243864}
-  _projectilePrefab: {fileID: 7922748140249529947, guid: 285f14bad7f11af43a3ee5369d172b15, type: 3}
+  _projectilePrefab: {fileID: 7922748140249529947, guid: 6e9e20f1e837a374ba33e89a3ca93e0d, type: 3}
+  _pelletCount: 8
+  _spreadAngle: 20

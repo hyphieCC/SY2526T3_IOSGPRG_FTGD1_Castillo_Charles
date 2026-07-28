@@ -57,10 +57,7 @@ namespace Castillo.UI
             UpdateWeaponDisplay(_equippedWeapon);
         }
 
-        private void OnReserveAmmoChanged(
-            AmmoType ammoType,
-            int currentAmount
-        )
+        private void OnReserveAmmoChanged(AmmoType ammoType, int currentAmount)
         {
             if (_equippedWeapon == null)
             {
@@ -82,8 +79,7 @@ namespace Castillo.UI
                 return;
             }
 
-            _clipAmmoText.text =
-                _equippedWeapon.CurrentClipAmmo.ToString();
+            _clipAmmoText.text = _equippedWeapon.CurrentClipAmmo.ToString();
 
             UpdateReserveAmmoText();
         }

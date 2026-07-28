@@ -42,7 +42,7 @@ namespace Castillo.Loot
 
         private void TrySpawnLoot()
         {
-            for (int attempt = 0; attempt < _maximumSpawnAttempts; attempt++)
+            for (int i = 0; i < _maximumSpawnAttempts; i++)
             {
                 Vector2 spawnPosition = GetRandomPosition();
 
@@ -126,9 +126,7 @@ namespace Castillo.Loot
             return GetRandomFromList(_ammoPickups);
         }
 
-        private GameObject GetRandomFromList(
-            List<GameObject> pickupPrefabs
-        )
+        private GameObject GetRandomFromList(List<GameObject> pickupPrefabs)
         {
             if (pickupPrefabs == null || pickupPrefabs.Count == 0)
             {

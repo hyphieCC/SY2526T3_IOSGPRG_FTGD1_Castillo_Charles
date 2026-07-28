@@ -20,8 +20,7 @@ namespace Castillo.Player
         {
             Vector2 aimInput = _inputReader.AimInput;
 
-            if (aimInput.sqrMagnitude <
-                _minimumAimMagnitude * _minimumAimMagnitude)
+            if (aimInput.sqrMagnitude < _minimumAimMagnitude * _minimumAimMagnitude)
             {
                 return;
             }

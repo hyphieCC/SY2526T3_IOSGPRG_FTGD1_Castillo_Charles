@@ -27,50 +27,22 @@ namespace Castillo.Weapons
 
         private void OnEnable()
         {
-            if (_inputReader == null)
-            {
-                return;
-            }
-
-            _inputReader.FirePressed += FireEquippedWeapon;
+            _inputReader.FirePressed += BeginFiringEquippedWeapon;
+            _inputReader.FireReleased += EndFiringEquippedWeapon;
             _inputReader.PrimaryWeaponSelected += EquipPrimaryWeapon;
             _inputReader.SecondaryWeaponSelected += EquipSecondaryWeapon;
         }
 
         private void OnDisable()
         {
-            if (_inputReader == null)
-            {
-                return;
-            }
-
-            _inputReader.FirePressed -= FireEquippedWeapon;
+            _inputReader.FirePressed -= BeginFiringEquippedWeapon;
+            _inputReader.FireReleased -= EndFiringEquippedWeapon;
             _inputReader.PrimaryWeaponSelected -= EquipPrimaryWeapon;
             _inputReader.SecondaryWeaponSelected -= EquipSecondaryWeapon;
         }
 
         private void Awake()
         {
-            if (_inputReader == null)
-            {
-                Debug.LogError(
-                    $"{nameof(WeaponInventory)} on {gameObject.name} " +
-                    $"is missing a PlayerInputReader reference.");
-            }
-
-            if (_ammoInventory == null)
-            {
-                Debug.LogError(
-                    $"{nameof(WeaponInventory)} on {gameObject.name} " +
-                    $"is missing an AmmoInventory reference.");
-            }
-
-            if (_primaryWeaponHolder == null || _secondaryWeaponHolder == null)
-            {
-                Debug.LogError(
-                    $"{nameof(WeaponInventory)} on {gameObject.name} " +
-                    $"is missing one or more weapon holders.");
-            }
         }
 
         public void AddWeapon(WeaponBase weaponPrefab)
@@ -172,7 +144,8 @@ namespace Castillo.Weapons
                 weaponPrefab,
                 holder.position,
                 holder.rotation,
-                holder);
+                holder
+            );
 
             currentWeapon.transform.localPosition = Vector3.zero;
             currentWeapon.transform.localRotation = Quaternion.identity;
@@ -201,14 +174,24 @@ namespace Castillo.Weapons
             WeaponEquipped?.Invoke(EquippedWeapon);
         }
 
-        private void FireEquippedWeapon()
+        private void BeginFiringEquippedWeapon()
         {
             if (EquippedWeapon == null)
             {
                 return;
             }
 
-            EquippedWeapon.TryFire();
+            EquippedWeapon.BeginFire();
+        }
+
+        private void EndFiringEquippedWeapon()
+        {
+            if (EquippedWeapon == null)
+            {
+                return;
+            }
+
+            EquippedWeapon.EndFire();
         }
     }
 }
