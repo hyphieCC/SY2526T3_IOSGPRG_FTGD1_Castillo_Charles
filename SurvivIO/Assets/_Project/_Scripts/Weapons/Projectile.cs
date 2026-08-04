@@ -1,5 +1,7 @@
 using UnityEngine;
 using Castillo.Combat;
+using Castillo.Effects;
+using Castillo.Enemies;
 
 namespace Castillo.Weapons
 {
@@ -22,13 +24,6 @@ namespace Castillo.Weapons
             Destroy(gameObject, _maximumLifetime);
         }
 
-        public void Launch(Vector2 direction, GameObject owner)
-        {
-            _ownerHealth = owner.GetComponent<Health>();
-
-            _rigidbody.velocity = direction.normalized * _moveSpeed;
-        }
-
         private void OnTriggerEnter2D(Collider2D other)
         {
             Health hitHealth = other.GetComponentInParent<Health>();
@@ -38,15 +33,47 @@ namespace Castillo.Weapons
                 return;
             }
 
-            IDamageable damageable =
-                other.GetComponentInParent<IDamageable>();
+            IDamageable damageable = other.GetComponentInParent<IDamageable>();
 
             if (damageable != null)
             {
                 damageable.TakeDamage(_damage);
+
+                TryHitPause(other);
             }
 
             Destroy(gameObject);
+        }
+
+        public void Launch(Vector2 direction, GameObject owner)
+        {
+            _ownerHealth = owner.GetComponent<Health>();
+
+            _rigidbody.velocity = direction.normalized * _moveSpeed;
+        }
+
+        private void TryHitPause(Collider2D other)
+        {
+            if (_ownerHealth == null)
+            {
+                return;
+            }
+
+            bool wasShotByPlayer = _ownerHealth.GetComponent<Player.PlayerDeath>() != null;
+
+            if (!wasShotByPlayer)
+            {
+                return;
+            }
+
+            bool hitEnemy = other.GetComponentInParent<EnemyDeath>() != null;
+
+            if (!hitEnemy)
+            {
+                return;
+            }
+
+            HitPause.Instance.Pause();
         }
     }
 }

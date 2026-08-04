@@ -100,8 +100,7 @@ namespace Castillo.Enemies
         {
             _patrolTimer += Time.deltaTime;
 
-            if (_movement.HasReachedDestination ||
-                _patrolTimer >= _maximumPatrolDuration)
+            if (_movement.HasReachedDestination || _patrolTimer >= _maximumPatrolDuration)
             {
                 SelectPatrolDestination();
             }
@@ -118,8 +117,7 @@ namespace Castillo.Enemies
             }
 
             Vector2 targetPosition = target.transform.position;
-            float distanceSquared =
-                ((Vector2)transform.position - targetPosition).sqrMagnitude;
+            float distanceSquared = ((Vector2)transform.position - targetPosition).sqrMagnitude;
 
             _weaponController.AimAt(targetPosition);
 
@@ -193,8 +191,7 @@ namespace Castillo.Enemies
             }
 
             _weaponController.BeginFiring();
-            _nextSemiAutomaticInputTime =
-                Time.time + _semiAutomaticInputInterval;
+            _nextSemiAutomaticInputTime = Time.time + _semiAutomaticInputInterval;
         }
     }
 }

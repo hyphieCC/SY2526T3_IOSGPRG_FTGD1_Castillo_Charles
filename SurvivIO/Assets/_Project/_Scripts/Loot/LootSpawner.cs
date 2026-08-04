@@ -8,6 +8,7 @@ namespace Castillo.Loot
         [Header("Spawn Settings")]
         [SerializeField] private int _spawnCount = 30;
         [SerializeField] private float _weaponSpawnChance = 0.3f;
+        [SerializeField] private float _healthPickupSpawnChance = 0.1f;
         [SerializeField] private float _minimumSpawnDistance = 2f;
         [SerializeField] private int _maximumSpawnAttempts = 20;
 
@@ -24,6 +25,9 @@ namespace Castillo.Loot
 
         [Header("Ammo Pickups")]
         [SerializeField] private List<GameObject> _ammoPickups;
+
+        [Header("Health Pickup")]
+        [SerializeField] private GameObject _healthPickupPrefab;
 
         private readonly List<Vector2> _spawnedPositions = new List<Vector2>();
 
@@ -116,9 +120,17 @@ namespace Castillo.Loot
 
         private GameObject GetRandomPickup()
         {
-            bool spawnWeapon = Random.value < _weaponSpawnChance;
+            float randomValue = Random.value;
 
-            if (spawnWeapon)
+            if (randomValue < _healthPickupSpawnChance)
+            {
+                return _healthPickupPrefab;
+            }
+
+            float remainingValue = (randomValue - _healthPickupSpawnChance) /
+                (1f - _healthPickupSpawnChance);
+
+            if (remainingValue < _weaponSpawnChance)
             {
                 return GetRandomFromList(_weaponPickups);
             }

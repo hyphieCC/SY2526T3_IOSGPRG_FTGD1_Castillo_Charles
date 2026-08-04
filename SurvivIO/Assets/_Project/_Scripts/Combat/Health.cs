@@ -14,6 +14,7 @@ namespace Castillo.Combat
         public bool IsDead => CurrentHealth <= 0f;
 
         public event Action<float, float> HealthChanged;
+        public event Action Damaged;
         public event Action Died;
 
         private void Awake()
@@ -29,6 +30,8 @@ namespace Castillo.Combat
             }
 
             CurrentHealth = Mathf.Max(CurrentHealth - damageAmount, 0f);
+
+            Damaged?.Invoke();
             HealthChanged?.Invoke(CurrentHealth, _maximumHealth);
 
             if (IsDead)

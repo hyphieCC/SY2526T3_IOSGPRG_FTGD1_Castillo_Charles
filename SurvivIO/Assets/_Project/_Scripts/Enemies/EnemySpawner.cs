@@ -1,3 +1,5 @@
+using Castillo.Combat;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +22,11 @@ namespace Castillo.Enemies
         [SerializeField] private LayerMask _blockedLayers;
 
         private readonly List<Vector2> _spawnedPositions = new List<Vector2>();
+
+        public int AliveEnemyCount { get; private set; }
+
+        public event Action AllEnemiesDefeated;
+        public event Action<int> AliveEnemyCountChanged;
 
         private void Start()
         {
@@ -45,31 +52,37 @@ namespace Castillo.Enemies
                     continue;
                 }
 
-                Instantiate(
+                GameObject enemyObject = Instantiate(
                     _enemyPrefab,
                     spawnPosition,
                     Quaternion.identity,
                     transform
                 );
 
+                Health enemyHealth = enemyObject.GetComponent<Health>();
+
+                if (enemyHealth != null)
+                {
+                    enemyHealth.Died += OnEnemyDied;
+                }
+
+                AliveEnemyCount++;
+                AliveEnemyCountChanged?.Invoke(AliveEnemyCount);
                 _spawnedPositions.Add(spawnPosition);
                 return;
             }
 
-            Debug.LogWarning(
-                $"{nameof(EnemySpawner)} could not find " +
-                "a valid enemy spawn position."
-            );
+            Debug.LogWarning($"{nameof(EnemySpawner)} could not find " + "a valid enemy spawn position.");
         }
 
         private Vector2 GetRandomSpawnPosition()
         {
-            float randomX = Random.Range(
+            float randomX = UnityEngine.Random.Range(
                 _minimumWorldPosition.x,
                 _maximumWorldPosition.x
             );
 
-            float randomY = Random.Range(
+            float randomY = UnityEngine.Random.Range(
                 _minimumWorldPosition.y,
                 _maximumWorldPosition.y
             );
@@ -105,6 +118,19 @@ namespace Castillo.Enemies
             }
 
             return true;
+        }
+
+        private void OnEnemyDied()
+        {
+            AliveEnemyCount--;
+            AliveEnemyCountChanged?.Invoke(AliveEnemyCount);
+
+            if (AliveEnemyCount > 0)
+            {
+                return;
+            }
+
+            AllEnemiesDefeated?.Invoke();
         }
     }
 }

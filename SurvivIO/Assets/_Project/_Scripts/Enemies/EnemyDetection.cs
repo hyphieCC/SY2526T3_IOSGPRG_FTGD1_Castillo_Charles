@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Castillo.Combat;
@@ -8,6 +9,9 @@ namespace Castillo.Enemies
 {
     public class EnemyDetection : MonoBehaviour
     {
+        [SerializeField] private float _startupGracePeriod = 2f;
+        [SerializeField] private CircleCollider2D _detectionCollider;
+
         private readonly List<Health> _detectedTargets = new List<Health>();
 
         public Health CurrentTarget { get; private set; }
@@ -15,6 +19,7 @@ namespace Castillo.Enemies
         public event Action<Health> TargetDetected;
         public event Action TargetLost;
 
+        private bool _canDetect;
         private Health _ownerHealth;
 
         private void Awake()
@@ -32,6 +37,11 @@ namespace Castillo.Enemies
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (!_canDetect)
+            {
+                return;
+            }
+
             Health detectedHealth = other.GetComponentInParent<Health>();
 
             if (detectedHealth == null)
@@ -79,6 +89,60 @@ namespace Castillo.Enemies
             }
 
             SelectNextTarget();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return new WaitForSeconds(_startupGracePeriod);
+
+            _canDetect = true;
+
+            ScanForTargets();
+
+        }
+
+        private void ScanForTargets()
+        {
+            Vector2 center = _detectionCollider.transform.TransformPoint(
+                    _detectionCollider.offset
+                );
+
+            float radius =
+                _detectionCollider.radius * Mathf.Max(
+                    _detectionCollider.transform.lossyScale.x,
+                    _detectionCollider.transform.lossyScale.y
+                );
+
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(center, radius);
+
+            foreach (Collider2D detectedCollider in colliders)
+            {
+                Health detectedHealth = detectedCollider.GetComponentInParent<Health>();
+
+                if (detectedHealth == null)
+                {
+                    continue;
+                }
+
+                if (detectedHealth == _ownerHealth)
+                {
+                    continue;
+                }
+
+                if (detectedHealth.IsDead)
+                {
+                    continue;
+                }
+
+                if (_detectedTargets.Contains(detectedHealth))
+                {
+                    continue;
+                }
+
+                _detectedTargets.Add(detectedHealth);
+            }
+
+            SelectNearestTarget();
         }
 
         private void SelectNearestTarget()

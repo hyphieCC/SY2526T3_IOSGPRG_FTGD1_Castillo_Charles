@@ -11,6 +11,7 @@ namespace Castillo.Weapons
         [SerializeField] private WeaponType _weaponType;
         [SerializeField] private WeaponSlot _weaponSlot;
         [SerializeField] private AmmoType _ammoType;
+        [SerializeField] private Sprite _weaponSlotIcon;
 
         [Header("Ammo")]
         [SerializeField] private int _clipCapacity;
@@ -27,6 +28,7 @@ namespace Castillo.Weapons
         public WeaponType WeaponType => _weaponType;
         public WeaponSlot WeaponSlot => _weaponSlot;
         public AmmoType AmmoType => _ammoType;
+        public Sprite WeaponSlotIcon => _weaponSlotIcon;
         public int CurrentClipAmmo { get; private set; }
         public int ClipCapacity => _clipCapacity;
         public bool IsReloading { get; private set; }
